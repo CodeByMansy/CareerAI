@@ -1,0 +1,564 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CareerAI | Job Matching</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/job_matching.css') }}">
+</head>
+
+<body class="dashboard-body">
+
+    <canvas id="background"></canvas>
+
+    <main class="job-matching-page">
+        <!-- HEADER -->
+        <header class="job-page-header">
+
+            <div>
+                <span class="job-eyebrow">
+                    CAREERAI WORKSPACE
+                </span>
+
+                <h1>Job Matching</h1>
+
+                <p>
+                    Discover opportunities that align with your
+                    skills, experience, and career goals.
+                </p>
+            </div>
+
+            <a href="{{ url_for('dashboard') }}"
+               class="job-back-link">
+                <span>←</span>
+                Back to Dashboard
+            </a>
+
+        </header>
+
+
+        <!-- SEARCH FORM -->
+        <section class="job-search-card">
+
+            <div class="job-card-heading">
+
+                <span class="job-eyebrow">
+                    PERSONALIZED SEARCH
+                </span>
+
+                <h2>Find Your Best Match</h2>
+
+                <p>
+                    Add your skills or upload your resume
+                    to discover suitable job opportunities.
+                </p>
+
+            </div>
+
+
+            <form method="POST"
+                  action="{{ url_for('job_matching') }}"
+                  enctype="multipart/form-data">
+
+                <div class="job-form-grid">
+
+                    <div class="job-form-group">
+
+                        <label for="role">
+                            Preferred Job Role
+                        </label>
+
+                        <input
+                            type="text"
+                            id="role"
+                            name="role"
+                            value="{{ form_data.role }}"
+                            placeholder="e.g. Python Developer"
+                        >
+
+                    </div>
+
+
+                    <div class="job-form-group">
+
+                        <label for="resume">
+                            Upload Resume (PDF)
+                        </label>
+
+                        <input
+                            type="file"
+                            id="resume"
+                            name="resume"
+                            accept=".pdf"
+                        >
+
+                        <small>
+                            Upload a text-based PDF resume.
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <div class="job-form-group">
+
+                    <label for="skills">
+                        Your Skills
+                    </label>
+
+                    <textarea
+                        id="skills"
+                        name="skills"
+                        rows="4"
+                        placeholder="Python, Flask, SQL, HTML, CSS, JavaScript..."
+                    >{{ form_data.skills }}</textarea>
+
+                </div>
+
+
+                <div class="job-form-group">
+
+                    <label for="job_description">
+                        Job Description
+                        <span class="optional-label">(Optional)</span>
+                    </label>
+
+                    <textarea
+                        id="job_description"
+                        name="job_description"
+                        rows="5"
+                        placeholder="Paste a job description here to calculate your match score for that specific role."
+                    >{{ form_data.job_description }}</textarea>
+
+                    <small>
+                        Leave this empty to compare your profile
+                        with the sample job listings.
+                    </small>
+
+                </div>
+
+
+                <button type="submit"
+                        class="job-match-button">
+                    Find Matching Jobs
+                    <span>→</span>
+                </button>
+
+            </form>
+
+        </section>
+
+
+
+        <!-- CUSTOM JOB ANALYSIS -->
+        {% if selected_job and analysis %}
+
+        <section class="job-results-section">
+
+            <div class="job-results-heading">
+
+                <div>
+                    <span class="job-eyebrow">
+                        JOB ANALYSIS
+                    </span>
+
+                    <h2>
+                        {{ selected_job.title }}
+                    </h2>
+
+                    <p>
+                        {{ selected_job.company }}
+                    </p>
+                </div>
+
+            </div>
+
+
+            <article class="job-result-card">
+
+                <div class="job-result-top">
+
+                    <div>
+                        <span class="job-type">
+                            {{ selected_job.type }}
+                        </span>
+
+                        <h3>
+                            {{ selected_job.title }}
+                        </h3>
+
+                        <p>
+                            {{ selected_job.company }}
+                        </p>
+
+                    </div>
+
+
+                    <div class="job-score">
+
+                        {% if analysis.score is not none %}
+
+                        <strong>
+                            {{ analysis.score }}%
+                        </strong>
+
+                        <span>Match Score</span>
+
+                        {% else %}
+
+                        <strong>—</strong>
+
+                        <span>No score</span>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+
+                {% if analysis.score is not none %}
+
+                <div class="job-score-track">
+
+                    <div class="job-score-fill"
+                         style="width: {{ analysis.score }}%;">
+                    </div>
+
+                </div>
+
+                {% endif %}
+
+
+                <p class="job-description">
+                    {{ selected_job.description }}
+                </p>
+
+
+                {% if analysis.score is not none %}
+
+                <div class="job-skills-columns">
+
+                    <div>
+
+                        <h4>Matching Skills</h4>
+
+                        <div class="job-skill-list">
+
+                            {% for skill in analysis.matching_skills %}
+
+                            <span class="job-skill matched">
+                                ✓ {{ skill }}
+                            </span>
+
+                            {% else %}
+
+                            <span class="job-empty-text">
+                                No matching skills found.
+                            </span>
+
+                            {% endfor %}
+
+                        </div>
+
+                    </div>
+
+
+                    <div>
+
+                        <h4>Skills to Improve</h4>
+
+                        <div class="job-skill-list">
+
+                            {% for skill in analysis.missing_skills %}
+
+                            <span class="job-skill missing">
+                                + {{ skill }}
+                            </span>
+
+                            {% else %}
+
+                            <span class="job-empty-text">
+                                No missing skills detected.
+                            </span>
+
+                            {% endfor %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="job-recommendation">
+
+                    <strong>Career Recommendation</strong>
+
+                    {% if analysis.score >= 75 %}
+
+                    <p>
+                        Your profile contains many of the identified
+                        skills. Consider applying and tailoring your
+                        resume to the role.
+                    </p>
+
+                    {% elif analysis.score >= 40 %}
+
+                    <p>
+                        Your profile has some relevant skills.
+                        Focus on developing the missing skills
+                        and improving your project experience.
+                    </p>
+
+                    {% else %}
+
+                    <p>
+                        Consider learning the required skills
+                        and building relevant projects before
+                        applying for this role.
+                    </p>
+
+                    {% endif %}
+
+                </div>
+
+                {% endif %}
+
+            </article>
+
+        </section>
+
+        {% endif %}
+
+
+
+        <!-- SAMPLE JOB RESULTS -->
+        {% if results %}
+
+        <section class="job-results-section">
+
+            <div class="job-results-heading">
+
+                <div>
+                    <span class="job-eyebrow">
+                        PERSONALIZED OPPORTUNITIES
+                    </span>
+
+                    <h2>Matching Jobs</h2>
+
+                    <p>
+                        Sample opportunities ranked by your
+                        keyword-based skill match.
+                    </p>
+                </div>
+
+                <span class="job-result-count">
+                    {{ results|length }} Jobs
+                </span>
+
+            </div>
+
+
+            <div class="job-results-grid">
+
+                {% for job in results %}
+
+                <article class="job-result-card">
+
+                    <div class="job-result-top">
+
+                        <div>
+
+                            <span class="job-type">
+                                {{ job.type }}
+                            </span>
+
+                            <h3>
+                                {{ job.title }}
+                            </h3>
+
+                            <p>
+                                {{ job.company }}
+                            </p>
+
+                            <span class="job-location">
+                                {{ job.location }}
+                            </span>
+
+                        </div>
+
+
+                        <div class="job-score">
+
+                            <strong>
+                                {{ job.score }}%
+                            </strong>
+
+                            <span>Match</span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="job-score-track">
+
+                        <div class="job-score-fill"
+                             style="width: {{ job.score }}%;">
+                        </div>
+
+                    </div>
+
+
+                    <p class="job-description">
+                        {{ job.description }}
+                    </p>
+
+
+                    <div class="job-skills-columns">
+
+                        <div>
+
+                            <h4>Matching Skills</h4>
+
+                            <div class="job-skill-list">
+
+                                {% for skill in job.matching_skills %}
+
+                                <span class="job-skill matched">
+                                    ✓ {{ skill }}
+                                </span>
+
+                                {% else %}
+
+                                <span class="job-empty-text">
+                                    No matches
+                                </span>
+
+                                {% endfor %}
+
+                            </div>
+
+                        </div>
+
+
+                        <div>
+
+                            <h4>Missing Skills</h4>
+
+                            <div class="job-skill-list">
+
+                                {% for skill in job.missing_skills %}
+
+                                <span class="job-skill missing">
+                                    + {{ skill }}
+                                </span>
+
+                                {% else %}
+
+                                <span class="job-empty-text">
+                                    No missing skills
+                                </span>
+
+                                {% endfor %}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="job-card-footer">
+
+                        <span>Keyword-based match</span>
+
+                        <span>
+                            {{ job.score }}% compatibility
+                        </span>
+
+                    </div>
+
+                </article>
+
+                {% endfor %}
+
+            </div>
+
+        </section>
+
+        {% endif %}
+
+
+
+        <!-- EMPTY STATE -->
+        {% if not results and not selected_job %}
+
+        <section class="job-empty-state">
+
+            <div class="job-empty-icon">
+                ✦
+            </div>
+
+            <h2>
+                Your next opportunity starts here
+            </h2>
+
+            <p>
+                Enter your skills or upload your resume
+                to discover matching job opportunities.
+            </p>
+
+        </section>
+
+        {% endif %}
+
+
+
+        <!-- FOOTER -->
+        <footer class="job-page-footer">
+
+            <span>© 2026 CareerAI</span>
+
+            <span>
+                Your career journey, powered by intelligence.
+            </span>
+
+        </footer>
+
+    </main>
+
+ <!-- SIDEBAR TOGGLE -->
+    <button
+        type="button"
+        id="sidebarToggle"
+        class="sidebar-toggle"
+        aria-label="Toggle sidebar"
+        aria-controls="sidebar"
+        aria-expanded="true"
+    >
+        ☰
+    </button>
+
+    <!-- JAVASCRIPT -->
+    <script
+        src="{{ url_for('static', filename='js/background.js') }}"
+    ></script>
+
+ 
+
+    <script
+        src="{{ url_for('static', filename='js/app.js') }}"
+    ></script>
+
+</body>
+</html>

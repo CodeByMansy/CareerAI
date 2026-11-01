@@ -1,0 +1,175 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CareerAI | Create Account</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+    <canvas id="background"></canvas>
+
+    <main class="auth-container">
+        <section class="brand-panel">
+            <div class="brand">
+                <div class="brand-icon">✦</div>
+                <span>Career<span class="highlight">AI</span></span>
+            </div>
+
+            <div class="brand-content">
+                <span class="eyebrow">START YOUR NEXT CHAPTER.</span>
+
+                <h1>
+                    Your potential<br>
+                    has no <span class="gradient-text">limits.</span>
+                </h1>
+
+                <p>
+                    Create your CareerAI account and turn your skills,
+                    experience, and ambitions into your next opportunity.
+                </p>
+
+                <div class="quote-card">
+                    <span class="quote-mark">“</span>
+                    <p>Your next opportunity begins with one confident step.</p>
+                    <span class="quote-caption">THE CAREERAI JOURNEY</span>
+                </div>
+            </div>
+
+            <div class="brand-footer">
+                <span>© 2026 CareerAI</span>
+                <span>Designed for your next chapter</span>
+            </div>
+        </section>
+
+        <section class="form-panel">
+            <div class="form-top">
+                <span class="mobile-brand">
+                    ✦ Career<span class="highlight">AI</span>
+                </span>
+
+                <span class="secure-label">● SECURE ACCESS</span>
+            </div>
+
+            <div class="form-content">
+                <div class="form-heading">
+                    <span class="welcome-tag">CREATE YOUR ACCOUNT</span>
+
+                    <h2>
+                        Let's get<br>
+                        <span class="gradient-text">started.</span>
+                    </h2>
+
+                    <p>
+                        Set up your account to begin your career journey.
+                    </p>
+                </div>
+
+                <!-- Flask flash messages -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="flash-message {{ category }}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                <!-- Registration Form -->
+                <form
+                    id="registerForm"
+                    method="POST"
+                    action="{{ url_for('register') }}"
+                >
+                    <label for="fullName">Full name</label>
+
+                    <input
+                        type="text"
+                        id="fullName"
+                        name="fullName"
+                        placeholder="Enter your full name"
+                        autocomplete="name"
+                        required
+                    >
+
+                    <label for="registerEmail">Email address</label>
+
+                    <input
+                        type="email"
+                        id="registerEmail"
+                        name="email"
+                        placeholder="you@example.com"
+                        autocomplete="email"
+                        required
+                    >
+
+                    <label for="registerPassword">Create password</label>
+
+                    <div class="password-wrapper">
+                        <input
+                            type="password"
+                            id="registerPassword"
+                            name="password"
+                            placeholder="At least 8 characters"
+                            minlength="8"
+                            autocomplete="new-password"
+                            required
+                        >
+
+                        <button
+                            type="button"
+                            class="toggle-password"
+                            data-target="registerPassword"
+                        >
+                            Show
+                        </button>
+                    </div>
+
+                    <!-- Corrected Terms Checkbox -->
+                    <label class="remember-row">
+                        <input
+                            type="checkbox"
+                            id="agree"
+                            name="agree"
+                            value="yes"
+                            required
+                        >
+
+                        <span>
+                            I agree to the Terms of Service and Privacy Policy.
+                        </span>
+                    </label>
+
+                    <button type="submit" class="primary-button">
+                        Create account <span>→</span>
+                    </button>
+
+                    <p class="form-message" id="formMessage"></p>
+                </form>
+
+                <div class="divider">
+                    <span>OR</span>
+                </div>
+
+                <p class="signup-text">
+                    Already have an account?
+                    <a href="{{ url_for('login') }}">Sign in</a>
+                </p>
+            </div>
+
+            <div class="form-footer">
+                <span>Privacy</span>
+                <span>Terms</span>
+                <span>Help center</span>
+            </div>
+        </section>
+    </main>
+
+    <script src="{{ url_for('static', filename='js/background.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,579 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CareerAI | Professional Resume Builder</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/builder.css') }}">
+</head>
+<body class="dashboard-body">
+
+    <canvas id="background"></canvas>
+
+    <div class="resume-builder-page">
+
+        <!-- PAGE HEADER -->
+        <header class="resume-builder-heading">
+
+            <div>
+                <p class="eyebrow">CAREERAI WORKSPACE</p>
+
+                <h1>Professional Resume Builder</h1>
+
+                <p>
+                    Create a polished, ATS-friendly resume
+                    that highlights your skills and achievements.
+                </p>
+            </div>
+
+           <a href="{{ url_for('dashboard') }}"
+   class="resume-back-link">
+    <span aria-hidden="true">←</span>
+    <span>Back to Dashboard</span>
+</a>
+
+        </header>
+
+
+        <!-- MAIN LAYOUT -->
+        <div class="resume-builder-layout">
+
+
+            <!-- RESUME FORM -->
+            <section class="resume-form-card">
+
+                <div class="resume-form-heading">
+                    <div>
+                        <span class="form-step-label">
+                            RESUME DETAILS
+                        </span>
+
+                        <h2>Build Your Resume</h2>
+
+                        <p class="form-description">
+                            Enter your details below.
+                            Preview your resume before downloading.
+                        </p>
+                    </div>
+                </div>
+
+
+                <form method="POST"
+                      action="{{ url_for('resume_builder') }}">
+
+
+                    <!-- PERSONAL INFORMATION -->
+                    <div class="form-section">
+
+                        <h3>
+                            <span class="section-number">01</span>
+                            Personal Information
+                        </h3>
+
+                        <label for="full_name">
+                            Full Name
+                        </label>
+
+                        <input
+                            type="text"
+                            id="full_name"
+                            name="full_name"
+                            value="{{ resume.full_name if resume else '' }}"
+                            placeholder="Enter your full name"
+                            required
+                        >
+
+
+                        <div class="form-row">
+
+                            <div>
+                                <label for="email">
+                                    Email Address
+                                </label>
+
+                                <input
+                                    type="email"
+                                    id="email"
+                                    name="email"
+                                    value="{{ resume.email if resume else '' }}"
+                                    placeholder="you@example.com"
+                                >
+                            </div>
+
+
+                            <div>
+                                <label for="phone">
+                                    Phone Number
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="phone"
+                                    name="phone"
+                                    value="{{ resume.phone if resume else '' }}"
+                                    placeholder="+91 98765 43210"
+                                >
+                            </div>
+
+                        </div>
+
+
+                        <label for="location">
+                            Location
+                        </label>
+
+                        <input
+                            type="text"
+                            id="location"
+                            name="location"
+                            value="{{ resume.location if resume else '' }}"
+                            placeholder="City, State"
+                        >
+
+                    </div>
+
+
+
+                    <!-- PROFESSIONAL SUMMARY -->
+                    <div class="form-section">
+
+                        <h3>
+                            <span class="section-number">02</span>
+                            Professional Summary
+                        </h3>
+
+                        <label for="summary">
+                            Career Summary
+                        </label>
+
+                        <textarea
+                            id="summary"
+                            name="summary"
+                            rows="4"
+                            placeholder="Write a short professional summary describing your background, skills, and career goals."
+                        >{{ resume.summary if resume else '' }}</textarea>
+
+                        <small>
+                            Keep your summary concise and relevant
+                            to your target role.
+                        </small>
+
+                    </div>
+
+
+
+                    <!-- EDUCATION -->
+                    <div class="form-section">
+
+                        <h3>
+                            <span class="section-number">03</span>
+                            Education
+                        </h3>
+
+                        <label for="degree">
+                            Degree / Qualification
+                        </label>
+
+                        <input
+                            type="text"
+                            id="degree"
+                            name="degree"
+                            value="{{ resume.degree if resume else '' }}"
+                            placeholder="B.E. Computer Engineering"
+                        >
+
+
+                        <label for="college">
+                            College / University
+                        </label>
+
+                        <input
+                            type="text"
+                            id="college"
+                            name="college"
+                            value="{{ resume.college if resume else '' }}"
+                            placeholder="Enter college or university name"
+                        >
+
+
+                        <label for="graduation_year">
+                            Graduation Year
+                        </label>
+
+                        <input
+                            type="text"
+                            id="graduation_year"
+                            name="graduation_year"
+                            value="{{ resume.graduation_year if resume else '' }}"
+                            placeholder="2027"
+                        >
+
+                    </div>
+
+
+
+                    <!-- SKILLS -->
+                    <div class="form-section">
+
+                        <h3>
+                            <span class="section-number">04</span>
+                            Technical Skills
+                        </h3>
+
+                        <label for="skills">
+                            Skills
+                        </label>
+
+                        <textarea
+                            id="skills"
+                            name="skills"
+                            rows="4"
+                            placeholder="Python, Flask, SQL, HTML, CSS, JavaScript"
+                        >{{ resume.skills if resume else '' }}</textarea>
+
+                        <small>
+                            Separate skills with commas or enter
+                            one skill per line.
+                        </small>
+
+                    </div>
+
+
+
+                    <!-- PROJECTS -->
+                    <div class="form-section">
+
+                        <h3>
+                            <span class="section-number">05</span>
+                            Projects
+                        </h3>
+
+                        <label for="projects">
+                            Project Details
+                        </label>
+
+                        <textarea
+                            id="projects"
+                            name="projects"
+                            rows="6"
+                            placeholder="Project Name&#10;Technologies Used&#10;Describe your contribution, features, and results."
+                        >{{ resume.projects if resume else '' }}</textarea>
+
+                        <small>
+                            Mention the project title, technologies,
+                            and your contribution.
+                        </small>
+
+                    </div>
+
+
+
+                    <!-- EXPERIENCE -->
+                    <div class="form-section">
+
+                        <h3>
+                            <span class="section-number">06</span>
+                            Experience
+                        </h3>
+
+                        <label for="experience">
+                            Work Experience / Internship
+                        </label>
+
+                        <textarea
+                            id="experience"
+                            name="experience"
+                            rows="6"
+                            placeholder="Job Title | Company | Dates&#10;Describe your responsibilities and achievements."
+                        >{{ resume.experience if resume else '' }}</textarea>
+
+                        <small>
+                            If you are a fresher, you can leave
+                            this section empty.
+                        </small>
+
+                    </div>
+
+
+
+                    <!-- ACTION BUTTONS -->
+                    <div class="resume-form-actions">
+
+                        <button
+                            type="submit"
+                            name="action"
+                            value="preview"
+                            class="resume-button preview-button"
+                        >
+                            Preview Resume
+                        </button>
+
+
+                        <button
+                            type="submit"
+                            name="action"
+                            value="download_pdf"
+                            class="resume-button download-button"
+                        >
+                            Download PDF
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </section>
+
+
+
+            <!-- RESUME PREVIEW -->
+            <section class="resume-preview-section">
+
+                <div class="preview-heading">
+
+                    <div>
+                        <span class="form-step-label">
+                            LIVE DOCUMENT
+                        </span>
+
+                        <h2>Resume Preview</h2>
+
+                        <p>
+                            Your professional resume layout.
+                        </p>
+                    </div>
+
+                    <span class="preview-status">
+                        PDF READY
+                    </span>
+
+                </div>
+
+
+
+                {% if resume %}
+
+                <div class="resume-paper">
+
+
+                    <!-- RESUME HEADER -->
+                    <header class="resume-paper-header">
+
+                        <h1>
+                            {{ resume.full_name }}
+                        </h1>
+
+
+                        <div class="resume-contact">
+
+                            {% if resume.email %}
+                                <span>
+                                    {{ resume.email }}
+                                </span>
+                            {% endif %}
+
+
+                            {% if resume.phone %}
+                                <span>
+                                    {{ resume.phone }}
+                                </span>
+                            {% endif %}
+
+
+                            {% if resume.location %}
+                                <span>
+                                    {{ resume.location }}
+                                </span>
+                            {% endif %}
+
+                        </div>
+
+                    </header>
+
+
+
+                    <!-- SUMMARY -->
+                    {% if resume.summary %}
+
+                    <section class="resume-paper-section">
+
+                        <h2>
+                            PROFESSIONAL SUMMARY
+                        </h2>
+
+                        <p>
+                            {{ resume.summary }}
+                        </p>
+
+                    </section>
+
+                    {% endif %}
+
+
+
+                    <!-- EDUCATION -->
+                    {% if resume.degree or resume.college or resume.graduation_year %}
+
+                    <section class="resume-paper-section">
+
+                        <h2>
+                            EDUCATION
+                        </h2>
+
+
+                        {% if resume.degree %}
+
+                        <h3>
+                            {{ resume.degree }}
+                        </h3>
+
+                        {% endif %}
+
+
+                        {% if resume.college %}
+
+                        <p>
+                            {{ resume.college }}
+                        </p>
+
+                        {% endif %}
+
+
+                        {% if resume.graduation_year %}
+
+                        <p class="resume-muted">
+                            {{ resume.graduation_year }}
+                        </p>
+
+                        {% endif %}
+
+                    </section>
+
+                    {% endif %}
+
+
+
+                    <!-- SKILLS -->
+                    {% if resume.skills %}
+
+                    <section class="resume-paper-section">
+
+                        <h2>
+                            TECHNICAL SKILLS
+                        </h2>
+
+                        <p class="resume-preserve-lines">
+                            {{ resume.skills }}
+                        </p>
+
+                    </section>
+
+                    {% endif %}
+
+
+
+                    <!-- PROJECTS -->
+                    {% if resume.projects %}
+
+                    <section class="resume-paper-section">
+
+                        <h2>
+                            PROJECTS
+                        </h2>
+
+                        <p class="resume-preserve-lines">
+                            {{ resume.projects }}
+                        </p>
+
+                    </section>
+
+                    {% endif %}
+
+
+
+                    <!-- EXPERIENCE -->
+                    {% if resume.experience %}
+
+                    <section class="resume-paper-section">
+
+                        <h2>
+                            EXPERIENCE
+                        </h2>
+
+                        <p class="resume-preserve-lines">
+                            {{ resume.experience }}
+                        </p>
+
+                    </section>
+
+                    {% endif %}
+
+
+                </div>
+
+
+                {% else %}
+
+
+                <!-- EMPTY PREVIEW -->
+                <div class="resume-preview-empty">
+
+                    <div class="preview-icon">
+                        CV
+                    </div>
+
+                    <h3>
+                        Your resume preview will appear here
+                    </h3>
+
+                    <p>
+                        Enter your details and click
+                        <strong>Preview Resume</strong>
+                        to see your professional resume.
+                    </p>
+
+                </div>
+
+
+                {% endif %}
+
+            </section>
+
+        </div>
+
+    </div>
+
+
+
+ <!-- SIDEBAR TOGGLE -->
+    <button
+        type="button"
+        id="sidebarToggle"
+        class="sidebar-toggle"
+        aria-label="Toggle sidebar"
+        aria-controls="sidebar"
+        aria-expanded="true"
+    >
+        ☰
+    </button>
+
+    <!-- JAVASCRIPT -->
+    <script
+        src="{{ url_for('static', filename='js/background.js') }}"
+    ></script>
+
+
+    <script
+        src="{{ url_for('static', filename='js/app.js') }}"
+    ></script>
+
+</body>
+
+</html>

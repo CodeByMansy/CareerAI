@@ -1,0 +1,1176 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CareerAI | Dashboard</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/dashboard.css') }}">
+</head>
+
+<body class="dashboard-body">
+
+    <!-- BACKGROUND -->
+    <canvas id="background"></canvas>
+
+    <div class="dashboard-layout">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar" id="sidebar">
+
+            <!-- BRAND -->
+            <div class="sidebar-brand">
+                <div class="brand-icon">✦</div>
+
+                <span>
+                    Career<span class="highlight">AI</span>
+                </span>
+            </div>
+
+            <!-- NAVIGATION -->
+            <div class="sidebar-section">
+
+                <span class="sidebar-label">WORKSPACE</span>
+
+                <a href="{{ url_for('dashboard') }}"
+                   class="nav-item {% if request.endpoint == 'dashboard' %}active{% endif %}">
+                    <span>▦</span>
+                    Dashboard
+                </a>
+
+                <a href="{{ url_for('resume_analyzer') }}"
+                   class="nav-item {% if request.endpoint == 'resume_analyzer' %}active{% endif %}">
+                    <span>▤</span>
+                    Resume Analyzer
+                </a>
+
+                <a href="{{ url_for('resume_builder') }}"
+                   class="nav-item {% if request.endpoint == 'resume_builder' %}active{% endif %}">
+                    <span>✧</span>
+                    Resume Builder
+                </a>
+
+                <a href="{{ url_for('job_matching') }}"
+                   class="nav-item {% if request.endpoint == 'job_matching' %}active{% endif %}">
+                    <span>⌕</span>
+                    Job Matching
+                </a>
+
+                <a href="{{ url_for('interview_prep') }}"
+                   class="nav-item {% if request.endpoint == 'interview_prep' %}active{% endif %}">
+                    <span>◈</span>
+                    Interview Prep
+                </a>
+
+                <a href="{{ url_for('job_tracker') }}"
+                   class="nav-item {% if request.endpoint == 'job_tracker' %}active{% endif %}">
+                    <span>☷</span>
+                    Application Tracker
+                </a>
+
+            </div>
+
+            <!-- SIDEBAR BOTTOM -->
+            <div class="sidebar-bottom">
+
+                <div class="sidebar-help">
+
+                    <span class="help-icon">✦</span>
+
+                    <strong>Need career guidance?</strong>
+
+                    <p>
+                        Your AI career assistant is here to help.
+                    </p>
+
+                    <button
+                        type="button"
+                        class="help-button"
+                        onclick="openCareerAIChat()">
+
+                        Explore AI Assistant →
+
+                    </button>
+
+                </div>
+
+                <!-- SIGN OUT -->
+                <a href="{{ url_for('logout') }}"
+                   class="nav-item logout-link">
+
+                    <span>↪</span>
+                    Sign out
+
+                </a>
+
+            </div>
+
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="dashboard-main">
+
+            <!-- HEADER -->
+            <header class="dashboard-header">
+
+                <div class="header-title">
+
+                    <span class="header-label">
+                        YOUR CAREER OVERVIEW
+                    </span>
+
+                    <h1>Dashboard</h1>
+
+                </div>
+
+                <!-- PROFILE -->
+                <div class="header-profile">
+
+                    <div class="notification-icon">♧</div>
+
+                    <div class="profile-avatar">
+                        {{ session.get('user_name', 'U')[0]|upper }}
+                    </div>
+
+                    <div class="profile-info">
+
+                        <strong>
+                            {{ session.get('user_name', 'User') }}
+                        </strong>
+
+                        <span>Career Explorer</span>
+
+                    </div>
+
+                </div>
+
+            </header>
+
+            <!-- WELCOME BANNER -->
+            <section class="welcome-banner">
+
+                <div class="welcome-content">
+
+                    <span class="welcome-tag">
+                        LET'S BUILD YOUR FUTURE
+                    </span>
+
+                    <h2>
+                        Welcome back,
+
+                        <span class="gradient-text">
+                            {{ session.get('user_name', 'Career Explorer') }}!
+                        </span>
+                    </h2>
+
+                    <p>
+                        Your next opportunity is closer than you think.
+                        Let's take the next step in your career journey.
+                    </p>
+
+                    <button
+                        type="button"
+                        class="banner-button"
+                        onclick="document.querySelector('.dashboard-section').scrollIntoView({behavior: 'smooth'});">
+
+                        Explore Career Tools
+                        <span>→</span>
+
+                    </button>
+
+                </div>
+
+                <!-- BANNER DECORATION -->
+                <div class="banner-decoration">
+
+                    <div class="orbit orbit-one"></div>
+                    <div class="orbit orbit-two"></div>
+                    <div class="orbit orbit-three"></div>
+
+                    <div class="orbit-center">✦</div>
+
+                </div>
+
+            </section>
+
+            <!-- SUMMARY CARDS -->
+            <section class="stats-grid">
+
+                <!-- RESUME SCORE -->
+                <div class="stat-card">
+
+                    <div class="stat-top">
+                        <span>Resume Score</span>
+                        <span class="stat-icon purple">✧</span>
+                    </div>
+
+                    <h3>
+                        {{ stats.resume_score }}
+                        <small>/100</small>
+                    </h3>
+
+                    <p>
+                        Analyze your resume to get a score.
+                    </p>
+
+                </div>
+
+                <!-- JOB MATCHES -->
+                <div class="stat-card">
+
+                    <div class="stat-top">
+                        <span>Job Matches</span>
+                        <span class="stat-icon cyan">⌕</span>
+                    </div>
+
+                    <h3>
+                        {{ stats.job_matches }}
+                    </h3>
+
+                    <p>
+                        Discover jobs that fit your profile.
+                    </p>
+
+                </div>
+
+                <!-- APPLICATIONS -->
+                <div class="stat-card">
+
+                    <div class="stat-top">
+                        <span>Applications</span>
+                        <span class="stat-icon pink">▤</span>
+                    </div>
+
+                    <h3>
+                        {{ stats.applications }}
+                    </h3>
+
+                    <p>
+                        Track your job applications.
+                    </p>
+
+                </div>
+
+                <!-- INTERVIEW PREP -->
+                <div class="stat-card">
+
+                    <div class="stat-top">
+                        <span>Interview Prep</span>
+                        <span class="stat-icon green">◈</span>
+                    </div>
+
+                    <h3>
+                        {{ stats.interview_prep }}
+                    </h3>
+
+                    <p>
+                        Practice and build confidence.
+                    </p>
+
+                </div>
+
+            </section>
+
+            <!-- CAREER TOOLS -->
+            <section class="dashboard-section">
+
+                <div class="section-heading">
+
+                    <div>
+
+                        <span class="header-label">
+                            POWERED BY AI
+                        </span>
+
+                        <h2>Your career toolkit</h2>
+
+                    </div>
+
+                    <span class="section-caption">
+                        Explore your tools
+                    </span>
+
+                </div>
+
+                <!-- TOOLS GRID -->
+                <div class="tools-grid">
+
+                    <!-- RESUME ANALYZER -->
+                    <article class="tool-card">
+
+                        <div class="tool-icon purple">✧</div>
+
+                        <span class="tool-badge">
+                            AI ANALYSIS
+                        </span>
+
+                        <h3>Resume Analyzer</h3>
+
+                        <p>
+                            Get insights into your resume and discover
+                            ways to improve its impact.
+                        </p>
+
+                        <a href="{{ url_for('resume_analyzer') }}"
+                           class="tool-link">
+
+                            Analyze Resume
+                            <span>→</span>
+
+                        </a>
+
+                    </article>
+
+                    <!-- RESUME BUILDER -->
+                    <article class="tool-card">
+
+                        <div class="tool-icon cyan">▤</div>
+
+                        <span class="tool-badge">
+                            SMART BUILDER
+                        </span>
+
+                        <h3>Resume Builder</h3>
+
+                        <p>
+                            Create a professional resume tailored
+                            to your skills and career goals.
+                        </p>
+
+                        <a href="{{ url_for('resume_builder') }}"
+                           class="tool-link">
+
+                            Build Resume
+                            <span>→</span>
+
+                        </a>
+
+                    </article>
+
+                    <!-- JOB MATCHING -->
+                    <article class="tool-card">
+
+                        <div class="tool-icon pink">⌕</div>
+
+                        <span class="tool-badge">
+                            CAREER MATCH
+                        </span>
+
+                        <h3>Job Matching</h3>
+
+                        <p>
+                            Find opportunities that align with
+                            your skills and experience.
+                        </p>
+
+                        <a href="{{ url_for('job_matching') }}"
+                           class="tool-link">
+
+                            Find Jobs
+                            <span>→</span>
+
+                        </a>
+
+                    </article>
+
+                    <!-- INTERVIEW PREP -->
+                    <article class="tool-card">
+
+                        <div class="tool-icon green">◈</div>
+
+                        <span class="tool-badge">
+                            PRACTICE MODE
+                        </span>
+
+                        <h3>Interview Prep</h3>
+
+                        <p>
+                            Prepare for interviews with personalized
+                            questions and practice sessions.
+                        </p>
+
+                        <a href="{{ url_for('interview_prep') }}"
+                           class="tool-link">
+
+                            Start Practicing
+                            <span>→</span>
+
+                        </a>
+
+                    </article>
+
+                    <!-- APPLICATION TRACKER -->
+                    <article class="tool-card">
+
+                        <div class="tool-icon purple">☷</div>
+
+                        <span class="tool-badge">
+                            APPLICATION TRACKING
+                        </span>
+
+                        <h3>Application Tracker</h3>
+
+                        <p>
+                            Manage your job applications and track
+                            their progress in one place.
+                        </p>
+
+                        <a href="{{ url_for('job_tracker') }}"
+                           class="tool-link">
+
+                            Track Applications
+                            <span>→</span>
+
+                        </a>
+
+                    </article>
+
+                </div>
+
+            </section>
+
+                        <!-- PROFILE COMPLETION -->
+            <section class="profile-completion">
+
+                <div class="completion-icon">✦</div>
+
+                <div class="completion-content">
+
+                    <h3>Complete your career profile</h3>
+
+                    <p>
+                        Add your education, skills, and career goals
+                        to receive more relevant recommendations.
+                    </p>
+
+                </div>
+
+               <a
+    href="{{ url_for('profile') }}"
+    class="completion-button"
+>
+    Complete Profile →
+</a>
+
+            </section>
+
+            <!-- FOOTER -->
+            <footer class="dashboard-footer">
+
+                <span>© 2026 CareerAI</span>
+
+                <span>
+                    Your career journey, powered by intelligence.
+                </span>
+
+            </footer>
+
+        </main>
+
+    </div>
+
+    <!-- SIDEBAR TOGGLE BUTTON -->
+    <button
+        type="button"
+        id="sidebarToggle"
+        class="sidebar-toggle"
+        aria-label="Toggle sidebar"
+        aria-controls="sidebar"
+        aria-expanded="true">
+
+        ☰
+
+    </button>
+
+    <!-- EXISTING SCRIPTS -->
+    <script src="{{ url_for('static', filename='js/background.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+
+
+    <!-- ========================================= -->
+    <!-- CAREERAI FLOATING GEMINI AI ASSISTANT -->
+    <!-- ========================================= -->
+
+    <style>
+        .careerai-chat-launcher {
+            position: fixed;
+            right: 26px;
+            bottom: 24px;
+            z-index: 10000;
+
+            width: 60px;
+            height: 60px;
+
+            border: none;
+            border-radius: 50%;
+
+            color: #ffffff;
+            font-size: 26px;
+
+            cursor: pointer;
+
+            background: linear-gradient(
+                135deg,
+                #8b5cf6,
+                #06b6d4
+            );
+
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.38);
+
+            transition: transform 0.2s ease;
+        }
+
+        .careerai-chat-launcher:hover {
+            transform: translateY(-3px);
+        }
+
+        .careerai-chat-panel {
+            position: fixed;
+            right: 26px;
+            bottom: 98px;
+
+            z-index: 10000;
+
+            display: none;
+            flex-direction: column;
+
+            width: min(390px, calc(100vw - 32px));
+            height: min(570px, calc(100vh - 125px));
+
+            overflow: hidden;
+
+            color: #eef2ff;
+            background: #111827;
+
+            border: 1px solid rgba(139, 92, 246, 0.45);
+            border-radius: 20px;
+
+            box-shadow: 0 20px 65px rgba(0, 0, 0, 0.45);
+
+            font-family: inherit;
+        }
+
+        .careerai-chat-panel.open {
+            display: flex;
+        }
+
+        .careerai-chat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 17px 18px;
+
+            background: linear-gradient(
+                120deg,
+                rgba(124, 58, 237, 0.25),
+                rgba(6, 182, 212, 0.13)
+            );
+
+            border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+        }
+
+        .careerai-chat-heading {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+        }
+
+        .careerai-chat-mark {
+            display: grid;
+            place-items: center;
+
+            width: 38px;
+            height: 38px;
+
+            border-radius: 12px;
+
+            color: white;
+
+            background: linear-gradient(
+                135deg,
+                #8b5cf6,
+                #06b6d4
+            );
+        }
+
+        .careerai-chat-heading strong {
+            display: block;
+            font-size: 14px;
+        }
+
+        .careerai-chat-heading small {
+            display: block;
+            margin-top: 3px;
+
+            color: #a5b4fc;
+            font-size: 11px;
+        }
+
+        .careerai-chat-close {
+            border: none;
+            background: transparent;
+
+            color: #cbd5e1;
+            font-size: 24px;
+
+            cursor: pointer;
+        }
+
+        .careerai-chat-messages {
+            flex: 1;
+
+            overflow-y: auto;
+
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+
+            padding: 17px;
+        }
+
+        .careerai-chat-message {
+            max-width: 88%;
+
+            padding: 11px 13px;
+
+            border-radius: 14px;
+
+            font-size: 13px;
+            line-height: 1.55;
+
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+        }
+
+        .careerai-chat-message.assistant {
+            align-self: flex-start;
+
+            color: #e5e7eb;
+            background: #1f2937;
+
+            border: 1px solid rgba(148, 163, 184, 0.13);
+
+            border-bottom-left-radius: 4px;
+        }
+
+        .careerai-chat-message.user {
+            align-self: flex-end;
+
+            color: white;
+
+            background: linear-gradient(
+                135deg,
+                #7c3aed,
+                #0891b2
+            );
+
+            border-bottom-right-radius: 4px;
+        }
+
+        .careerai-chat-suggestions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 7px;
+
+            padding: 0 15px 12px;
+        }
+
+        .careerai-chat-suggestions button {
+            padding: 7px 10px;
+
+            border: 1px solid rgba(139, 92, 246, 0.35);
+            border-radius: 20px;
+
+            color: #c4b5fd;
+
+            background: rgba(139, 92, 246, 0.08);
+
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        .careerai-chat-suggestions button:hover {
+            background: rgba(139, 92, 246, 0.2);
+        }
+
+        .careerai-chat-form {
+            display: flex;
+            align-items: flex-end;
+            gap: 9px;
+
+            padding: 12px;
+
+            border-top: 1px solid rgba(148, 163, 184, 0.15);
+
+            background: #0f172a;
+        }
+
+        .careerai-chat-input {
+            flex: 1;
+            min-width: 0;
+
+            max-height: 100px;
+            resize: vertical;
+
+            padding: 11px 12px;
+
+            border: 1px solid #374151;
+            border-radius: 12px;
+
+            outline: none;
+
+            color: #f8fafc;
+            background: #1f2937;
+
+            font: inherit;
+            font-size: 13px;
+        }
+
+        .careerai-chat-input:focus {
+            border-color: #8b5cf6;
+        }
+
+        .careerai-chat-send {
+            width: 42px;
+            height: 42px;
+            flex: 0 0 42px;
+
+            border: none;
+            border-radius: 12px;
+
+            color: white;
+
+            background: linear-gradient(
+                135deg,
+                #8b5cf6,
+                #0891b2
+            );
+
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .careerai-chat-send:disabled {
+            opacity: 0.5;
+            cursor: wait;
+        }
+
+        .careerai-chat-note {
+            padding: 0 12px 10px;
+
+            color: #64748b;
+            background: #0f172a;
+
+            text-align: center;
+            font-size: 10px;
+        }
+
+        @media (max-width: 480px) {
+            .careerai-chat-launcher {
+                right: 16px;
+                bottom: 16px;
+            }
+
+            .careerai-chat-panel {
+                right: 16px;
+                bottom: 88px;
+            }
+        }
+    </style>
+
+
+    <!-- CHATBOT FLOATING BUTTON -->
+    <button
+        type="button"
+        class="careerai-chat-launcher"
+        id="careerAIChatLauncher"
+        aria-label="Open CareerAI Assistant"
+        aria-controls="careerAIChatPanel"
+        aria-expanded="false"
+        onclick="toggleCareerAIChat()">
+
+        ✦
+
+    </button>
+
+
+    <!-- CHATBOT PANEL -->
+    <section
+        class="careerai-chat-panel"
+        id="careerAIChatPanel"
+        aria-label="CareerAI Gemini Assistant"
+        aria-live="polite">
+
+        <!-- CHAT HEADER -->
+        <header class="careerai-chat-header">
+
+            <div class="careerai-chat-heading">
+
+                <div class="careerai-chat-mark">
+                    ✦
+                </div>
+
+                <div>
+
+                    <strong>CareerAI Assistant</strong>
+
+                    <small>Gemini · Career guidance</small>
+
+                </div>
+
+            </div>
+
+            <button
+                type="button"
+                class="careerai-chat-close"
+                aria-label="Close assistant"
+                onclick="closeCareerAIChat()">
+
+                ×
+
+            </button>
+
+        </header>
+
+
+        <!-- CHAT MESSAGES -->
+        <div
+            class="careerai-chat-messages"
+            id="careerAIChatMessages">
+
+            <div class="careerai-chat-message assistant">
+                Hi! I'm your CareerAI assistant.
+
+                Ask me about resumes, interviews, job searches,
+                or career planning.
+            </div>
+
+        </div>
+
+
+        <!-- SUGGESTED PROMPTS -->
+        <div
+            class="careerai-chat-suggestions"
+            id="careerAIChatSuggestions">
+
+            <button
+                type="button"
+                data-prompt="How can I improve my resume?">
+
+                Improve my resume
+
+            </button>
+
+            <button
+                type="button"
+                data-prompt="Give me common interview questions for a fresher.">
+
+                Interview tips
+
+            </button>
+
+            <button
+                type="button"
+                data-prompt="Help me create a career plan.">
+
+                Career planning
+
+            </button>
+
+        </div>
+
+
+        <!-- CHAT INPUT -->
+        <form
+            class="careerai-chat-form"
+            id="careerAIChatForm">
+
+            <textarea
+                class="careerai-chat-input"
+                id="careerAIChatInput"
+                rows="1"
+                maxlength="4000"
+                placeholder="Ask your career question..."
+                aria-label="Type your message"
+                required>
+            </textarea>
+
+            <button
+                class="careerai-chat-send"
+                id="careerAIChatSend"
+                type="submit"
+                aria-label="Send message">
+
+                ➤
+
+            </button>
+
+        </form>
+
+        <div class="careerai-chat-note">
+            AI responses may need verification.
+        </div>
+
+    </section>
+
+
+    <!-- CHATBOT JAVASCRIPT -->
+    <script>
+        (() => {
+
+            const panel = document.getElementById("careerAIChatPanel");
+
+            const launcher = document.getElementById(
+                "careerAIChatLauncher"
+            );
+
+            const messages = document.getElementById(
+                "careerAIChatMessages"
+            );
+
+            const form = document.getElementById(
+                "careerAIChatForm"
+            );
+
+            const input = document.getElementById(
+                "careerAIChatInput"
+            );
+
+            const sendButton = document.getElementById(
+                "careerAIChatSend"
+            );
+
+            const suggestions = document.getElementById(
+                "careerAIChatSuggestions"
+            );
+
+
+            // Store recent conversation messages.
+            const conversation = [];
+
+
+            // OPEN CHATBOT
+            window.openCareerAIChat = function () {
+
+                panel.classList.add("open");
+
+                launcher.setAttribute(
+                    "aria-expanded",
+                    "true"
+                );
+
+                input.focus();
+
+            };
+
+
+            // CLOSE CHATBOT
+            window.closeCareerAIChat = function () {
+
+                panel.classList.remove("open");
+
+                launcher.setAttribute(
+                    "aria-expanded",
+                    "false"
+                );
+
+            };
+
+
+            // TOGGLE CHATBOT
+            window.toggleCareerAIChat = function () {
+
+                if (panel.classList.contains("open")) {
+
+                    window.closeCareerAIChat();
+
+                } else {
+
+                    window.openCareerAIChat();
+
+                }
+
+            };
+
+
+            // ADD MESSAGE TO CHAT
+            function addMessage(role, text) {
+
+                const message = document.createElement("div");
+
+                message.className =
+                    "careerai-chat-message " + role;
+
+                // textContent safely displays text without rendering HTML.
+                message.textContent = text;
+
+                messages.appendChild(message);
+
+                messages.scrollTop = messages.scrollHeight;
+
+                return message;
+
+            }
+
+
+            // SEND MESSAGE TO GEMINI BACKEND
+            async function sendMessage(rawText) {
+
+                const text = rawText.trim();
+
+                if (!text || sendButton.disabled) {
+                    return;
+                }
+
+                suggestions.style.display = "none";
+
+                addMessage("user", text);
+
+                input.value = "";
+
+                sendButton.disabled = true;
+                input.disabled = true;
+
+                const typing = addMessage(
+                    "assistant",
+                    "Thinking..."
+                );
+
+
+                try {
+
+                    const response = await fetch(
+                        "{{ url_for('ai_assistant') }}",
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+
+                            body: JSON.stringify({
+
+                                message: text,
+
+                                history: conversation.slice(-10)
+
+                            })
+                        }
+                    );
+
+
+                    const data = await response.json().catch(
+                        () => ({})
+                    );
+
+
+                    if (!response.ok) {
+
+                        throw new Error(
+                            data.error ||
+                            "The assistant could not respond. Please try again."
+                        );
+
+                    }
+
+
+                    const reply =
+                        data.reply ||
+                        data.response ||
+                        "I couldn't create a response. Please try again.";
+
+
+                    typing.textContent = reply;
+
+
+                    conversation.push(
+
+                        {
+                            role: "user",
+                            content: text
+                        },
+
+                        {
+                            role: "assistant",
+                            content: reply
+                        }
+
+                    );
+
+
+                } catch (error) {
+
+                    typing.textContent =
+                        error.message ||
+                        "Connection error. Please try again.";
+
+                } finally {
+
+                    sendButton.disabled = false;
+                    input.disabled = false;
+
+                    input.focus();
+
+                    messages.scrollTop =
+                        messages.scrollHeight;
+
+                }
+
+            }
+
+
+            // FORM SUBMISSION
+            form.addEventListener("submit", (event) => {
+
+                event.preventDefault();
+
+                sendMessage(input.value);
+
+            });
+
+
+            // ENTER TO SEND
+            // SHIFT + ENTER TO CREATE NEW LINE
+            input.addEventListener("keydown", (event) => {
+
+                if (
+                    event.key === "Enter" &&
+                    !event.shiftKey
+                ) {
+
+                    event.preventDefault();
+
+                    form.requestSubmit();
+
+                }
+
+            });
+
+
+            // SUGGESTED PROMPTS
+            suggestions.addEventListener("click", (event) => {
+
+                const button = event.target.closest(
+                    "button[data-prompt]"
+                );
+
+                if (button) {
+
+                    sendMessage(button.dataset.prompt);
+
+                }
+
+            });
+
+        })();
+    </script>
+
+</body>
+</html>

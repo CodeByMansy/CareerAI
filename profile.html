@@ -1,0 +1,516 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Complete Profile | CareerAI</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/profile.css') }}"
+    >
+</head>
+
+<body class="profile-page">
+
+    <canvas id="background"></canvas>
+
+    <main class="profile-container">
+
+        <!-- HEADER -->
+
+        <header class="profile-header">
+
+            <a href="{{ url_for('dashboard') }}" class="profile-brand">
+                <span class="brand-icon">✦</span>
+                <span>Career<span class="highlight">AI</span></span>
+            </a>
+
+            <a
+                href="{{ url_for('dashboard') }}"
+                class="back-dashboard-btn"
+            >
+                <span class="back-icon">←</span>
+                Back to Dashboard
+            </a>
+
+        </header>
+
+        <!-- INTRODUCTION -->
+
+        <section class="profile-intro">
+
+            <span class="profile-eyebrow">
+                YOUR CAREER IDENTITY
+            </span>
+
+            <h1>
+                Complete your
+                <span class="gradient-text">career profile</span>
+            </h1>
+
+            <p>
+                Tell CareerAI about your education, skills, experience,
+                and career goals to receive more relevant recommendations.
+            </p>
+
+        </section>
+
+        <!-- COMPLETION CARD -->
+
+        <section class="profile-progress-card">
+
+            <div class="progress-top">
+
+                <div>
+                    <h3>Profile completion</h3>
+
+                    <p>
+                        A complete profile helps personalize your career journey.
+                    </p>
+                </div>
+
+                <strong id="completionPercentage">
+                    {{ completion }}%
+                </strong>
+
+            </div>
+
+            <div class="progress-track">
+                <div
+                    class="progress-fill"
+                    id="progressFill"
+                    style="width: {{ completion }}%;"
+                ></div>
+            </div>
+
+        </section>
+
+        <!-- FLASH MESSAGES -->
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+
+                {% for category, message in messages %}
+
+                    <div class="flash-message {{ category }}">
+                        {{ message }}
+                    </div>
+
+                {% endfor %}
+
+            {% endif %}
+        {% endwith %}
+
+        <!-- PROFILE FORM -->
+
+        <form
+            method="POST"
+            action="{{ url_for('profile') }}"
+            class="profile-form"
+        >
+
+            <!-- PERSONAL INFORMATION -->
+
+            <section class="profile-section">
+
+                <div class="section-title">
+
+                    <div class="section-icon">◈</div>
+
+                    <div>
+                        <h2>Personal information</h2>
+                        <p>Basic details about you</p>
+                    </div>
+
+                </div>
+
+                <div class="form-grid">
+
+                    <div class="form-group full-width">
+
+                        <label for="headline">
+                            Professional headline
+                        </label>
+
+                        <input
+                            type="text"
+                            id="headline"
+                            name="headline"
+                            maxlength="150"
+                            placeholder="Example: Computer Engineering Student | Python Developer"
+                            value="{{ profile.headline }}"
+                        >
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label for="phone">
+                            Phone number
+                        </label>
+
+                        <input
+                            type="tel"
+                            id="phone"
+                            name="phone"
+                            maxlength="20"
+                            placeholder="Enter your phone number"
+                            value="{{ profile.phone }}"
+                        >
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label for="location">
+                            Location
+                        </label>
+
+                        <input
+                            type="text"
+                            id="location"
+                            name="location"
+                            maxlength="150"
+                            placeholder="City, Country"
+                            value="{{ profile.location }}"
+                        >
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label for="linkedin">
+                            LinkedIn profile
+                        </label>
+
+                        <input
+                            type="url"
+                            id="linkedin"
+                            name="linkedin"
+                            placeholder="https://linkedin.com/in/your-profile"
+                            value="{{ profile.linkedin }}"
+                        >
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label for="github">
+                            GitHub profile
+                        </label>
+
+                        <input
+                            type="url"
+                            id="github"
+                            name="github"
+                            placeholder="https://github.com/your-username"
+                            value="{{ profile.github }}"
+                        >
+
+                    </div>
+
+                </div>
+
+            </section>
+
+            <!-- EDUCATION -->
+
+            <section class="profile-section">
+
+                <div class="section-title">
+
+                    <div class="section-icon">⌂</div>
+
+                    <div>
+                        <h2>Education</h2>
+                        <p>Your academic background</p>
+                    </div>
+
+                </div>
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+
+                        <label for="education">
+                            Degree / Qualification
+                        </label>
+
+                        <input
+                            type="text"
+                            id="education"
+                            name="education"
+                            placeholder="Example: Diploma in Computer Engineering"
+                            value="{{ profile.education }}"
+                        >
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label for="graduation_year">
+                            Graduation year
+                        </label>
+
+                        <input
+                            type="text"
+                            id="graduation_year"
+                            name="graduation_year"
+                            maxlength="20"
+                            placeholder="Example: 2026"
+                            value="{{ profile.graduation_year }}"
+                        >
+
+                    </div>
+
+                </div>
+
+            </section>
+
+            <!-- SKILLS -->
+
+            <section class="profile-section">
+
+                <div class="section-title">
+
+                    <div class="section-icon">✧</div>
+
+                    <div>
+                        <h2>Skills</h2>
+                        <p>Technologies and strengths you have developed</p>
+                    </div>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label for="skills">
+                        Your skills
+                    </label>
+
+                    <textarea
+                        id="skills"
+                        name="skills"
+                        rows="4"
+                        placeholder="Example: Python, Flask, Flutter, Dart, SQL, HTML, CSS, JavaScript"
+                    >{{ profile.skills }}</textarea>
+
+                    <small>
+                        Separate skills with commas.
+                    </small>
+
+                </div>
+
+            </section>
+
+            <!-- CAREER GOALS -->
+
+            <section class="profile-section">
+
+                <div class="section-title">
+
+                    <div class="section-icon">◎</div>
+
+                    <div>
+                        <h2>Career goals</h2>
+                        <p>Tell us what you want to achieve</p>
+                    </div>
+
+                </div>
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+
+                        <label for="preferred_role">
+                            Preferred job role
+                        </label>
+
+                        <input
+                            type="text"
+                            id="preferred_role"
+                            name="preferred_role"
+                            placeholder="Example: Software Developer"
+                            value="{{ profile.preferred_role }}"
+                        >
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label for="career_goal">
+                            Career goal
+                        </label>
+
+                        <input
+                            type="text"
+                            id="career_goal"
+                            name="career_goal"
+                            placeholder="Example: Get a software development internship"
+                            value="{{ profile.career_goal }}"
+                        >
+
+                    </div>
+
+                </div>
+
+            </section>
+
+            <!-- EXPERIENCE -->
+
+            <section class="profile-section">
+
+                <div class="section-title">
+
+                    <div class="section-icon">▤</div>
+
+                    <div>
+                        <h2>Experience</h2>
+                        <p>Internships, work, or practical experience</p>
+                    </div>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label for="experience">
+                        Experience details
+                    </label>
+
+                    <textarea
+                        id="experience"
+                        name="experience"
+                        rows="5"
+                        placeholder="Describe your internship, work experience, responsibilities, or relevant coursework. If you are a fresher, you can mention that."
+                    >{{ profile.experience }}</textarea>
+
+                </div>
+
+            </section>
+
+            <!-- PROJECTS -->
+
+            <section class="profile-section">
+
+                <div class="section-title">
+
+                    <div class="section-icon">⌘</div>
+
+                    <div>
+                        <h2>Projects</h2>
+                        <p>Showcase projects you have worked on</p>
+                    </div>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label for="projects">
+                        Project details
+                    </label>
+
+                    <textarea
+                        id="projects"
+                        name="projects"
+                        rows="5"
+                        placeholder="Project name, technologies used, features, and your contribution."
+                    >{{ profile.projects }}</textarea>
+
+                </div>
+
+            </section>
+
+            <!-- ACTIONS -->
+
+            <div class="profile-actions">
+
+                <a
+                    href="{{ url_for('dashboard') }}"
+                    class="secondary-button"
+                >
+                    Cancel
+                </a>
+
+                <button
+                    type="submit"
+                    class="save-profile-button"
+                >
+                    Save Profile
+                    <span>→</span>
+                </button>
+
+            </div>
+
+        </form>
+
+        <footer class="profile-footer">
+            CareerAI · Build your future with confidence
+        </footer>
+
+    </main>
+
+    <script
+        src="{{ url_for('static', filename='js/background.js') }}"
+    ></script>
+
+    <script>
+        const profileForm = document.querySelector(".profile-form");
+        const progressFill = document.getElementById("progressFill");
+        const completionPercentage = document.getElementById(
+            "completionPercentage"
+        );
+
+        const profileFields = [
+            "phone",
+            "location",
+            "headline",
+            "education",
+            "graduation_year",
+            "skills",
+            "career_goal",
+            "preferred_role",
+            "experience",
+            "projects",
+            "linkedin",
+            "github"
+        ];
+
+        function updateProfileCompletion() {
+
+            let completed = 0;
+
+            profileFields.forEach(function(fieldName) {
+
+                const field = document.querySelector(
+                    `[name="${fieldName}"]`
+                );
+
+                if (field && field.value.trim()) {
+                    completed++;
+                }
+
+            });
+
+            const percentage = Math.round(
+                completed / profileFields.length * 100
+            );
+
+            progressFill.style.width = percentage + "%";
+
+            completionPercentage.textContent =
+                percentage + "%";
+        }
+
+        profileForm.addEventListener("input", updateProfileCompletion);
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,6 @@
+Flask
+Werkzeug
+pypdf
+reportlab
+google-genai
+python-dotenv

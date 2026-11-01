@@ -1,0 +1,667 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Interview Preparation | CareerAI</title>
+
+    <style>
+        :root {
+            --bg: #080d1a;
+            --card: #151c31;
+            --text: #edf2ff;
+            --muted: #b7c4dc;
+            --primary: #8b5cf6;
+            --cyan: #22d3ee;
+            --border: #2b3653;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        /* Animated background */
+        #background {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Main container */
+        .interview-wrap {
+            width: 90%;
+            max-width: 1350px;
+            margin: 0 auto;
+            padding: 55px 0 60px;
+        }
+
+        /* Page header */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .page-header-content {
+            flex: 1;
+        }
+
+        .workspace-label {
+            color: #67e8f9;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin-bottom: 12px;
+        }
+
+        .page-header h1 {
+            font-size: clamp(1.7rem, 3vw, 2.4rem);
+            margin-bottom: 12px;
+        }
+
+        .page-header p {
+            color: var(--muted);
+            line-height: 1.7;
+            max-width: 750px;
+        }
+
+        /* Back to Dashboard button */
+        .back-dashboard-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            flex-shrink: 0;
+            padding: 10px 16px;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 10px;
+            background: rgba(139, 92, 246, 0.08);
+            color: #a5b4fc;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .back-dashboard-btn:hover {
+            background: rgba(139, 92, 246, 0.16);
+            border-color: var(--primary);
+            color: var(--cyan);
+            transform: translateY(-1px);
+            text-decoration: none;
+        }
+
+        .back-icon {
+            font-size: 18px;
+        }
+
+        /* Hero section */
+        .interview-hero {
+            background: linear-gradient(
+                135deg,
+                rgba(111, 76, 255, 0.20),
+                rgba(34, 211, 238, 0.10)
+            );
+            border: 1px solid rgba(148, 163, 184, 0.20);
+            border-radius: 22px;
+            padding: 32px;
+            margin-bottom: 24px;
+        }
+
+        .interview-hero h2 {
+            margin-bottom: 12px;
+            font-size: 1.5rem;
+        }
+
+        .interview-hero p {
+            color: var(--muted);
+            line-height: 1.7;
+        }
+
+        /* Panels */
+        .interview-panel {
+            background: rgba(15, 23, 42, 0.76);
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            border-radius: 18px;
+            padding: 25px;
+            margin-bottom: 22px;
+        }
+
+        .interview-panel h2 {
+            margin-bottom: 14px;
+            font-size: 1.3rem;
+        }
+
+        /* Form */
+        .interview-form {
+            display: grid;
+            grid-template-columns: repeat(
+                auto-fit,
+                minmax(190px, 1fr)
+            );
+            gap: 18px;
+            align-items: end;
+        }
+
+        .interview-form label {
+            display: block;
+            font-size: 0.9rem;
+            color: #cbd5e1;
+            margin-bottom: 8px;
+        }
+
+        .interview-form select {
+            width: 100%;
+            padding: 13px;
+            border-radius: 11px;
+            border: 1px solid #334155;
+            background: #0b1220;
+            color: #f8fafc;
+            outline: none;
+        }
+
+        .interview-form select:focus {
+            border-color: var(--primary);
+        }
+
+        .interview-btn {
+            width: 100%;
+            border: 0;
+            border-radius: 11px;
+            padding: 14px 18px;
+            font-weight: 700;
+            color: #fff;
+            background: linear-gradient(
+                90deg,
+                #7657ff,
+                #2dbbd4
+            );
+            cursor: pointer;
+            transition: opacity 0.2s ease,
+                        transform 0.2s ease;
+        }
+
+        .interview-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        /* Session details */
+        .session-meta {
+            color: #a5b4fc;
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+            line-height: 1.7;
+        }
+
+        .interview-note {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            line-height: 1.7;
+        }
+
+        /* Question cards */
+        .question-card {
+            background: rgba(15, 23, 42, 0.78);
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            border-radius: 17px;
+            padding: 22px;
+            margin: 16px 0;
+            transition: border-color 0.2s ease;
+        }
+
+        .question-card:hover {
+            border-color: rgba(124, 92, 255, 0.5);
+        }
+
+        .question-top {
+            display: flex;
+            gap: 14px;
+            align-items: flex-start;
+        }
+
+        .question-number {
+            display: inline-flex;
+            min-width: 34px;
+            height: 34px;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            background: rgba(124, 92, 255, 0.20);
+            color: #c4b5fd;
+            font-weight: 800;
+        }
+
+        .question-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .question-card h3 {
+            margin: 4px 0 14px;
+            font-size: 1.05rem;
+            line-height: 1.6;
+        }
+
+        /* Sample answers */
+        .sample-answer {
+            display: none;
+            margin-top: 15px;
+            padding: 16px;
+            border-radius: 12px;
+            background: rgba(2, 6, 23, 0.55);
+            border: 1px solid rgba(148, 163, 184, 0.12);
+            color: #cbd5e1;
+            line-height: 1.7;
+            white-space: pre-wrap;
+        }
+
+        .sample-answer.visible {
+            display: block;
+        }
+
+        .answer-toggle {
+            margin-top: 8px;
+            border: 1px solid #475569;
+            border-radius: 9px;
+            background: transparent;
+            color: #a5f3fc;
+            padding: 10px 14px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .answer-toggle:hover {
+            background: rgba(34, 211, 238, 0.08);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 22px;
+            color: #64748b;
+            font-size: 0.85rem;
+            border-top: 1px solid rgba(148, 163, 184, 0.12);
+        }
+
+        /* Responsive */
+        @media (max-width: 650px) {
+            .interview-wrap {
+                width: 92%;
+                padding: 30px 0 40px;
+            }
+
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .back-dashboard-btn {
+                align-self: flex-start;
+            }
+
+            .interview-hero,
+            .interview-panel {
+                padding: 19px;
+            }
+
+            .question-card {
+                padding: 17px;
+            }
+
+            .question-top {
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Animated background -->
+    <canvas id="background"></canvas>
+
+    <!-- MAIN CONTENT -->
+    <main class="interview-wrap">
+
+        <!-- PAGE HEADER -->
+        <header class="page-header">
+
+            <div class="page-header-content">
+
+                <div class="workspace-label">
+                    CAREERAI WORKSPACE
+                </div>
+
+                <h1>
+                    AI Interview Preparation
+                </h1>
+
+                <p>
+                    Practice role-specific technical and HR questions.
+                    Reveal sample answers and improve your interview skills
+                    with CareerAI's interview preparation module.
+                </p>
+
+            </div>
+
+            <a
+                href="{{ url_for('dashboard') }}"
+                class="back-dashboard-btn"
+            >
+                <span class="back-icon">←</span>
+                Back to Dashboard
+            </a>
+
+        </header>
+
+        <!-- HERO SECTION -->
+        <section class="interview-hero">
+
+            <h2>
+                🎤 Practice for Your Next Interview
+            </h2>
+
+            <p>
+                Prepare for your dream job with role-specific interview
+                questions. Choose your target role, difficulty level,
+                and interview type to create a practice session.
+            </p>
+
+        </section>
+
+        <!-- QUESTION GENERATION FORM -->
+        <section class="interview-panel">
+
+            <h2>
+                Create Your Practice Session
+            </h2>
+
+            <form
+                method="POST"
+                action="{{ url_for('interview_prep') }}"
+                class="interview-form"
+            >
+
+                <div>
+
+                    <label for="role">
+                        Target Job Role
+                    </label>
+
+                    <select
+                        id="role"
+                        name="role"
+                        required
+                    >
+
+                        {% for role in roles %}
+
+                            <option
+                                value="{{ role }}"
+                                {% if selected_role == role %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ role }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+                <div>
+
+                    <label for="difficulty">
+                        Difficulty
+                    </label>
+
+                    <select
+                        id="difficulty"
+                        name="difficulty"
+                    >
+
+                        {% for level in [
+                            "Beginner",
+                            "Intermediate",
+                            "Advanced"
+                        ] %}
+
+                            <option
+                                value="{{ level }}"
+                                {% if selected_difficulty == level %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ level }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+                <div>
+
+                    <label for="interview_type">
+                        Interview Type
+                    </label>
+
+                    <select
+                        id="interview_type"
+                        name="interview_type"
+                    >
+
+                        <option
+                            value="mixed"
+                            {% if selected_type == "mixed" %}
+                                selected
+                            {% endif %}
+                        >
+                            Mixed (Technical + HR)
+                        </option>
+
+                        <option
+                            value="technical"
+                            {% if selected_type == "technical" %}
+                                selected
+                            {% endif %}
+                        >
+                            Technical
+                        </option>
+
+                        <option
+                            value="hr"
+                            {% if selected_type == "hr" %}
+                                selected
+                            {% endif %}
+                        >
+                            HR / Behavioral
+                        </option>
+
+                    </select>
+
+                </div>
+
+                <div>
+
+                    <button
+                        class="interview-btn"
+                        type="submit"
+                    >
+                        Generate Practice Questions
+                    </button>
+
+                </div>
+
+            </form>
+
+        </section>
+
+        <!-- GENERATED QUESTIONS -->
+        {% if session_info %}
+
+            <section class="interview-panel">
+
+                <div class="session-meta">
+
+                    Practice Session #{{ session_info.id }}
+
+                    · {{ session_info.role }}
+
+                    · {{ session_info.difficulty }}
+
+                    · {{ session_info.question_count }} questions
+
+                </div>
+
+                <h2>
+                    Your Interview Questions
+                </h2>
+
+                <p class="interview-note">
+
+                    Try answering each question aloud before opening
+                    the sample answer. Sample answers are guides,
+                    not scripts to memorize.
+
+                </p>
+
+            </section>
+
+            {% for item in questions %}
+
+                <article class="question-card">
+
+                    <div class="question-top">
+
+                        <span class="question-number">
+                            {{ loop.index }}
+                        </span>
+
+                        <div class="question-content">
+
+                            <h3>
+                                {{ item.question }}
+                            </h3>
+
+                            <button
+                                class="answer-toggle"
+                                type="button"
+                                aria-expanded="false"
+                                onclick="toggleAnswer(
+                                    'answer-{{ loop.index }}',
+                                    this
+                                )"
+                            >
+                                Show Sample Answer
+                            </button>
+
+                            <div
+                                class="sample-answer"
+                                id="answer-{{ loop.index }}"
+                            >
+                                {{ item.answer }}
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+            {% endfor %}
+
+        {% else %}
+
+            <section class="interview-panel">
+
+                <h2>
+                    How to Practice
+                </h2>
+
+                <p class="interview-note">
+
+                    1. Choose your target job role.
+
+                    <br><br>
+
+                    2. Select the difficulty level.
+
+                    <br><br>
+
+                    3. Choose Technical, HR, or Mixed interview type.
+
+                    <br><br>
+
+                    4. Click Generate Practice Questions.
+
+                    <br><br>
+
+                    5. Try answering the questions before revealing
+                    the sample answers.
+
+                </p>
+
+            </section>
+
+        {% endif %}
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+
+        CareerAI © 2026 | Smart Career Preparation Platform
+
+    </footer>
+
+    <!-- ANSWER TOGGLE JAVASCRIPT -->
+    <script>
+        function toggleAnswer(id, button) {
+
+            const answer = document.getElementById(id);
+
+            if (!answer) {
+                return;
+            }
+
+            const isVisible = answer.classList.toggle("visible");
+
+            button.textContent = isVisible
+                ? "Hide Sample Answer"
+                : "Show Sample Answer";
+
+            button.setAttribute(
+                "aria-expanded",
+                isVisible ? "true" : "false"
+            );
+        }
+    </script>
+
+    <!-- BACKGROUND ANIMATION -->
+    <script src="{{ url_for('static', filename='js/background.js') }}"></script>
+
+</body>
+
+</html>

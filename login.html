@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CareerAI | Sign In</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+    <canvas id="background"></canvas>
+
+    <main class="auth-container">
+        <section class="brand-panel">
+            <div class="brand">
+                <div class="brand-icon">✦</div>
+                <span>Career<span class="highlight">AI</span></span>
+            </div>
+
+            <div class="brand-content">
+                <span class="eyebrow">YOUR CAREER. REIMAGINED.</span>
+
+                <h1>Build a career<br>that <span class="gradient-text">stands out.</span></h1>
+
+                <p>
+                    Your AI-powered career companion. Discover your strengths,
+                    optimize your resume, and move confidently toward your next opportunity.
+                </p>
+
+                <div class="feature-list">
+                    <div class="feature">
+                        <span class="feature-icon">✧</span>
+                        <div>
+                            <strong>AI Resume Insights</strong>
+                            <small>Understand your resume's strengths.</small>
+                        </div>
+                    </div>
+
+                    <div class="feature">
+                        <span class="feature-icon">⌁</span>
+                        <div>
+                            <strong>Smart Job Matching</strong>
+                            <small>Find roles that fit your skills.</small>
+                        </div>
+                    </div>
+
+                    <div class="feature">
+                        <span class="feature-icon">◈</span>
+                        <div>
+                            <strong>Interview Confidence</strong>
+                            <small>Prepare for your next big moment.</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="brand-footer">
+                <span>© 2026 CareerAI</span>
+                <span>Designed for your next chapter</span>
+            </div>
+        </section>
+
+        <section class="form-panel">
+            <div class="form-top">
+                <span class="mobile-brand">✦ Career<span class="highlight">AI</span></span>
+                <span class="secure-label">● SECURE ACCESS</span>
+            </div>
+
+            <div class="form-content">
+                <div class="form-heading">
+                    <span class="welcome-tag">WELCOME BACK</span>
+                    <h2>Sign in to your<br><span class="gradient-text">career space.</span></h2>
+                    <p>Pick up where your career journey left off.</p>
+                </div>
+
+                {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="flash-message {{ category }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+               <form id="loginForm" method="POST" action="{{ url_for('login') }}">
+                    <label for="email">Email address</label>
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        placeholder="you@example.com"
+                        required
+                    >
+
+                    <div class="password-label">
+                        <label for="password">Password</label>
+                        <a href="#" id="forgotPassword">Forgot password?</a>
+                    </div>
+
+                    <div class="password-wrapper">
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            placeholder="Enter your password"
+                            required
+                        >
+                        <button type="button" class="toggle-password" data-target="password">
+                            Show
+                        </button>
+                    </div>
+
+                    <label class="remember-row">
+                        <input type="checkbox" id="remember">
+                        <span>Keep me signed in</span>
+                    </label>
+
+                    <button type="submit" class="primary-button">
+                        Sign in <span>→</span>
+                    </button>
+
+                    <p class="form-message" id="formMessage"></p>
+                </form>
+
+                <div class="divider"><span>OR</span></div>
+
+                <p class="signup-text">
+                    New to CareerAI?
+                    <a href="{{ url_for('register') }}">Create an account</a>
+                </p>
+            </div>
+
+            <div class="form-footer">
+                <span>Privacy</span>
+                <span>Terms</span>
+                <span>Help center</span>
+            </div>
+        </section>
+    </main>
+
+    <script src="{{ url_for('static', filename='js/background.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

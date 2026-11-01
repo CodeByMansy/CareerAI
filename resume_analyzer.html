@@ -1,0 +1,529 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CareerAI | Resume Analyzer</title>
+
+    <!-- CSS -->
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/dashboard.css') }}"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/analyzer.css') }}"
+    >
+
+</head>
+
+<body class="dashboard-body">
+
+    <!-- BACKGROUND -->
+    <canvas id="background"></canvas>
+
+    <div class="dashboard-layout">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar" id="sidebar">
+
+            <!-- BRAND -->
+            <div class="sidebar-brand">
+
+                <div class="brand-icon">✦</div>
+
+                <span>
+                    Career<span class="highlight">AI</span>
+                </span>
+
+            </div>
+
+            <!-- NAVIGATION -->
+            <div class="sidebar-section">
+
+                <span class="sidebar-label">WORKSPACE</span>
+
+                <!-- DASHBOARD -->
+                <a
+                    href="{{ url_for('dashboard') }}"
+                    class="nav-item {% if request.endpoint == 'dashboard' %}active{% endif %}"
+                >
+                    <span>▦</span>
+                    Dashboard
+                </a>
+
+                <!-- RESUME ANALYZER -->
+                <a
+                    href="{{ url_for('resume_analyzer') }}"
+                    class="nav-item {% if request.endpoint == 'resume_analyzer' %}active{% endif %}"
+                >
+                    <span>▤</span>
+                    Resume Analyzer
+                </a>
+
+                <!-- RESUME BUILDER -->
+                <a
+                    href="{{ url_for('resume_builder') }}"
+                    class="nav-item {% if request.endpoint == 'resume_builder' %}active{% endif %}"
+                >
+                    <span>✧</span>
+                    Resume Builder
+                </a>
+
+                <!-- JOB MATCHING -->
+                <a
+                    href="{{ url_for('job_matching') }}"
+                    class="nav-item {% if request.endpoint == 'job_matching' %}active{% endif %}"
+                >
+                    <span>⌕</span>
+                    Job Matching
+                </a>
+
+                <!-- INTERVIEW PREP -->
+                <a
+                    href="{{ url_for('interview_prep') }}"
+                    class="nav-item {% if request.endpoint == 'interview_prep' %}active{% endif %}"
+                >
+                    <span>◈</span>
+                    Interview Prep
+                </a>
+
+                <!-- APPLICATION TRACKER -->
+                <a
+                    href="{{ url_for('job_tracker') }}"
+                    class="nav-item {% if request.endpoint == 'job_tracker' %}active{% endif %}"
+                >
+                    <span>☷</span>
+                    Application Tracker
+                </a>
+
+            </div>
+
+            <!-- SIDEBAR BOTTOM -->
+            <div class="sidebar-bottom">
+
+                <!-- HELP CARD -->
+                <div class="sidebar-help">
+
+                    <span class="help-icon">✦</span>
+
+                    <strong>Need career guidance?</strong>
+
+                    <p>
+                        Your AI career assistant is here to help.
+                    </p>
+
+                    <button
+                        type="button"
+                        class="help-button"
+                    >
+                        Explore AI Assistant →
+                    </button>
+
+                </div>
+
+                <!-- SIGN OUT -->
+                <a
+                    href="{{ url_for('logout') }}"
+                    class="nav-item logout-link"
+                >
+                    <span>↪</span>
+                    Sign out
+                </a>
+
+            </div>
+
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="dashboard-main">
+
+            <!-- HEADER -->
+            <header class="dashboard-header">
+
+                <div>
+
+                    <span class="header-label">
+                        AI-POWERED CAREER TOOL
+                    </span>
+
+                    <h1>Resume Analyzer</h1>
+
+                </div>
+
+                <!-- PROFILE -->
+                <div class="header-profile">
+
+                    <div class="profile-avatar">
+                        {{ session.get('user_name', 'U')[0]|upper }}
+                    </div>
+
+                    <div class="profile-info">
+
+                        <strong>
+                            {{ session.get('user_name', 'User') }}
+                        </strong>
+
+                        <span>Career Explorer</span>
+
+                    </div>
+
+                </div>
+
+            </header>
+
+            <!-- INTRODUCTION -->
+            <section class="analyzer-intro">
+
+                <span class="welcome-tag">
+                    OPTIMIZE YOUR NEXT OPPORTUNITY
+                </span>
+
+                <h2>
+                    Make your resume<br>
+                    <span class="gradient-text">
+                        stand out.
+                    </span>
+                </h2>
+
+                <p>
+                    Compare your resume with a job description to discover
+                    matching skills, missing keywords, and opportunities
+                    to improve your application.
+                </p>
+
+            </section>
+
+            <!-- FLASH MESSAGES -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+
+                {% if messages %}
+
+                    {% for category, message in messages %}
+
+                        <div class="flash-message {{ category }}">
+                            {{ message }}
+                        </div>
+
+                    {% endfor %}
+
+                {% endif %}
+
+            {% endwith %}
+
+            <!-- ANALYZER FORM -->
+            <section class="analyzer-card">
+
+                <div class="analyzer-card-heading">
+
+                    <div class="tool-icon purple">✧</div>
+
+                    <div>
+
+                        <h3>Analyze your resume</h3>
+
+                        <p>
+                            Upload your resume and add the target job description.
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <form
+                    method="POST"
+                    action="{{ url_for('resume_analyzer') }}"
+                    enctype="multipart/form-data"
+                    id="analyzerForm"
+                >
+
+                    <!-- RESUME UPLOAD -->
+                    <label for="resume">
+                        Upload Resume
+                    </label>
+
+                    <div class="upload-area" id="uploadArea">
+
+                        <input
+                            type="file"
+                            id="resume"
+                            name="resume"
+                            accept=".pdf,application/pdf"
+                            required
+                        >
+
+                        <div class="upload-content">
+
+                            <div class="upload-icon">↑</div>
+
+                            <strong id="fileName">
+                                Drop your resume here
+                            </strong>
+
+                            <p>
+                                or click to browse your files
+                            </p>
+
+                            <span>
+                                PDF format · Maximum 5 MB
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                    <!-- JOB DESCRIPTION -->
+                    <label for="job_description">
+                        Job Description
+                    </label>
+
+                    <textarea
+                        id="job_description"
+                        name="job_description"
+                        rows="8"
+                        placeholder="Paste the job description here..."
+                        required
+                    ></textarea>
+
+                    <!-- SUBMIT -->
+                    <button
+                        type="submit"
+                        class="primary-button analyze-button"
+                        id="analyzeButton"
+                    >
+                        Analyze Resume
+                        <span>→</span>
+                    </button>
+
+                </form>
+
+            </section>
+
+            <!-- ANALYSIS RESULTS -->
+            {% if result %}
+
+                <section class="results-section">
+
+                    <!-- RESULTS HEADING -->
+                    <div class="section-heading">
+
+                        <div>
+
+                            <span class="header-label">
+                                ANALYSIS COMPLETE
+                            </span>
+
+                            <h2>Your resume insights</h2>
+
+                        </div>
+
+                    </div>
+
+                    <!-- SCORE -->
+                    <div class="result-score-card">
+
+                        <div
+                            class="score-circle"
+                            style="--score: {{ result.score }}"
+                        >
+
+                            <div class="score-inner">
+
+                                <strong>
+                                    {{ result.score }}%
+                                </strong>
+
+                                <span>
+                                    Match Score
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                        <div class="score-description">
+
+                            <span class="welcome-tag">
+                                ESTIMATED MATCH
+                            </span>
+
+                            <h3>
+
+                                {% if result.score >= 75 %}
+
+                                    Strong keyword alignment
+
+                                {% elif result.score >= 45 %}
+
+                                    Room to improve
+
+                                {% else %}
+
+                                    Improve your alignment
+
+                                {% endif %}
+
+                            </h3>
+
+                            <p>
+                                This estimate is based on keyword overlap
+                                between your resume and the job description.
+                                It is not an official ATS score.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                    <!-- KEYWORD RESULTS -->
+                    <div class="keyword-results">
+
+                        <!-- MATCHING KEYWORDS -->
+                        <div class="keyword-card">
+
+                            <div class="keyword-heading">
+
+                                <span class="keyword-dot matching"></span>
+
+                                <h3>Matching Keywords</h3>
+
+                            </div>
+
+                            <p>
+                                Keywords found in both your resume
+                                and the job description.
+                            </p>
+
+                            <div class="keyword-list">
+
+                                {% for keyword in result.matching_keywords %}
+
+                                    <span class="keyword matching-keyword">
+                                        {{ keyword }}
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="empty-result">
+                                        No matching keywords found.
+                                    </span>
+
+                                {% endfor %}
+
+                            </div>
+
+                        </div>
+
+                        <!-- MISSING KEYWORDS -->
+                        <div class="keyword-card">
+
+                            <div class="keyword-heading">
+
+                                <span class="keyword-dot missing"></span>
+
+                                <h3>Missing Keywords</h3>
+
+                            </div>
+
+                            <p>
+                                Keywords from the job description
+                                that were not found in your resume.
+                            </p>
+
+                            <div class="keyword-list">
+
+                                {% for keyword in result.missing_keywords %}
+
+                                    <span class="keyword missing-keyword">
+                                        {{ keyword }}
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="empty-result">
+                                        No missing keywords detected.
+                                    </span>
+
+                                {% endfor %}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- RECOMMENDATION -->
+                    <div class="recommendation-card">
+
+                        <div class="tool-icon cyan">✦</div>
+
+                        <div>
+
+                            <h3>Resume improvement tip</h3>
+
+                            <p>
+                                Review the missing keywords and add relevant
+                                skills or experience only when they accurately
+                                reflect your background. Avoid adding skills
+                                you do not have.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+            {% endif %}
+
+            <!-- FOOTER -->
+            <footer class="dashboard-footer">
+
+                <span>© 2026 CareerAI</span>
+
+                <span>
+                    Career insights powered by intelligence.
+                </span>
+
+            </footer>
+
+        </main>
+
+    </div>
+
+    <!-- SIDEBAR TOGGLE -->
+    <button
+        type="button"
+        id="sidebarToggle"
+        class="sidebar-toggle"
+        aria-label="Toggle sidebar"
+        aria-controls="sidebar"
+        aria-expanded="true"
+    >
+        ☰
+    </button>
+
+    <!-- JAVASCRIPT -->
+    <script
+        src="{{ url_for('static', filename='js/background.js') }}"
+    ></script>
+
+   
+
+    <script
+        src="{{ url_for('static', filename='js/app.js') }}"
+    ></script>
+
+</body>
+
+</html>
